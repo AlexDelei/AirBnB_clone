@@ -77,7 +77,7 @@ class ConsoleCode(cmd.Cmd):
             print('Usage: chmod <permission> <file>')
             return
         permission, file_path = args
-        valid_permissions = {'u+x': 0o100, 'u-x': 0o0, 'g+x': 0o010, 'g-x'}
+        valid_permissions = {'u+x': 0o100, 'u-x': 0o0, 'g+x': 0o010, 'g-x': 0o0}
 
         if permission not in valid_permissions:
             print('Invalid permission. Use u+x, u-x, g+x, g-x')
