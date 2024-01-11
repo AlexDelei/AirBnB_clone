@@ -11,14 +11,19 @@ class BaseModel:
     3 methods
     """
 
-    def __init__(self, my_number=None, name=None):
+    def __init__(self, *args, **kwargs):
         """Initializing public int attr"""
-
-        self.id = str(uuid.uuid4())
-        self.my_number = my_number
-        self.name = name
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != '__class__':
+                    if key in('created_at', ' updated_at'):
+                        setattr(self, key, datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f'))
+                    else:
+                        setattr(self, key, value)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def save(self):
         """Saves the updated time"""
@@ -37,4 +42,4 @@ class BaseModel:
     
     def __str__(self):
         """string representation of class"""
-        return "[{}] {}) {} {}".format(self.__class__.__name__, self.my_number, self.name, self.__dict__)
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
