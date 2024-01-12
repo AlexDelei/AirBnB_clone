@@ -6,20 +6,20 @@ import os
 import subprocess
 
 
-class ConsoleCode(cmd.Cmd):
+class HBNBCommand(cmd.Cmd):
     """Our Console code"""
 
     prompt = '(hbnb) '
 
     def do_quit(self, arg):
-        """Exiting the Console"""
+        """Quit command to exit the program"""
 
         return True
 
     def do_EOF(self, arg):
         """Simulating EOF"""
 
-        print(f'{ConsoleCode.prompt}EOF reached')
+        return True
 
     def do_mkdir(self, arg):
         """creates new directory"""
@@ -100,23 +100,4 @@ class ConsoleCode(cmd.Cmd):
 
 
 if __name__ == '__main__':
-    """Handling interactive and non-interactive mode"""
-
-    if len(sys.argv) > 1:
-        command = ' '.join(sys.argv[1:])
-        shell = ConsoleCode()
-        shell.onecmd(command)
-    else:
-        try:
-            if sys.stdin.isatty():
-                ConsoleCode().cmdloop()
-            else:
-                shell = ConsoleCode()
-                print(f'{shell.prompt}')
-                for line in sys.stdin:
-                    line = line.strip()
-                    if line:
-                        shell.onecmd(line)
-                        print(f'{shell.prompt}')
-        except KeyboardInterrupt:
-            pass
+    HBNBCommand().cmdloop()
