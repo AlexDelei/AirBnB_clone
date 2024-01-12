@@ -35,12 +35,12 @@ class BaseModel:
         """Converts to dictionary"""
 
         obj_dict = {
-                'my_number': self.my_number,
-                'name': self.name,
-                '__class__': self.__class__.__name__,
-                'updated_at': self.updated_at.isoformat(),
                 'id': self.id,
-                'created_at': self.created_at.isoformat()
+                'created_at': self.created_at.isoformat(),
+                '__class__': self.__class__.__name__,
+                'my_number': self.my_number,
+                'updated_at': self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at,
+                'name': self.name,
                 }
         return obj_dict
     
