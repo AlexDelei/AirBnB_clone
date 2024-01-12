@@ -38,9 +38,9 @@ class BaseModel:
                 'id': self.id,
                 'created_at': self.created_at.isoformat(),
                 '__class__': self.__class__.__name__,
-                'my_number': self.my_number,
+                'my_number': getattr(self, 'my_number', None),
                 'updated_at': self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at,
-                'name': self.name,
+                'name': getattr(self, 'name', None)
                 }
         return obj_dict
     
