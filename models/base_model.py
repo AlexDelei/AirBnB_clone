@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from models import storage
 
+
 class BaseModel:
     """Parent class with
 
@@ -16,8 +17,12 @@ class BaseModel:
         if kwargs:
             for key, value in kwargs.items():
                 if key != '__class__':
-                    if key in('created_at', ' updated_at'):
-                        setattr(self, key, datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f'))
+                    if key in ('created_at', ' updated_at'):
+                        setattr(
+                            self,
+                            key,
+                            datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                            )
                     else:
                         setattr(self, key, value)
         else:
@@ -28,7 +33,6 @@ class BaseModel:
 
     def save(self):
         """Saves the updated time"""
-        
         storage.save()
 
     def to_dict(self):
@@ -39,11 +43,19 @@ class BaseModel:
                 'created_at': self.created_at.isoformat(),
                 '__class__': self.__class__.__name__,
                 'my_number': getattr(self, 'my_number', None),
-                'updated_at': self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at,
+                'updated_at': (
+                    self.updated_at.isoformat()
+                    if isinstance(self.updated_at, datetime)
+                    else self.updated_at
+                    ),
                 'name': getattr(self, 'name', None)
                 }
         return obj_dict
-    
+
     def __str__(self):
         """string representation of class"""
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(
+                self.__class__.__name__,
+                self.id,
+                self.__dict__
+                )
