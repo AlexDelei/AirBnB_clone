@@ -42,15 +42,23 @@ class BaseModel:
                 'id': self.id,
                 'created_at': self.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f'),
                 '__class__': self.__class__.__name__,
-                'my_number': getattr(self, 'my_number', None),
+
                 'updated_at': (
                     self.updated_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
                     if isinstance(self.updated_at, datetime)
                     else self.updated_at
                     ),
-                'name': getattr(self, 'name', None)
                 }
         return obj_dict
+
+    @classmethod
+    def from_dict(cls, data):
+        """returns dictionary items"""
+        return cls(
+                id = data.get('id'),
+                created_at = data.get('created_at'),
+                updated_at = data.get('updated_at')
+                )
 
     def __str__(self):
         """string representation of class"""
