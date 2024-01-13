@@ -8,6 +8,13 @@ import json
 import uuid
 import ast
 import shlex
+import models
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
+from models.user import User
+from models.state import State
+from models.city import City
 from datetime import datetime
 from importlib import import_module
 
@@ -102,6 +109,9 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = '(hbnb) '
 
+    classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
+
     def do_create(self, arg):
         """creates an instance and saves it to a json file"""
 
@@ -110,7 +120,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         class_name = arg.split()[0]
-        if class_name not in ['BaseModel', 'User']:
+        if class_name not in self.classes:
             print('** class doesn\'t exist **')
             return
         new_inst = globals()[class_name]()
@@ -130,7 +140,7 @@ class HBNBCommand(cmd.Cmd):
 
         class_name = obj_id[0]
 
-        if class_name not in ['BaseModel', 'User']:
+        if class_name not in self.classes:
             print('** class doesn\'t exist **')
             return
 
@@ -168,7 +178,7 @@ class HBNBCommand(cmd.Cmd):
 
         class_name = obj_id[0]
 
-        if class_name not in ['BaseModel', 'User']:
+        if class_name not in self.classes:
             print('** class doesn\'t exist **')
             return
 
@@ -211,7 +221,7 @@ class HBNBCommand(cmd.Cmd):
                 if arg:
                     class_name = arg.strip()
                     try:
-                        if class_name not in ['BaseModel', 'User']:
+                        if class_name not in self.classes:
                             raise NameError
                     except NameError:
                         print('** class doesn\'t exist **')
@@ -248,7 +258,7 @@ class HBNBCommand(cmd.Cmd):
         if not class_name:
             print('** class name missing **')
             return
-        if class_name not in ['BaseModel', 'User']:
+        if class_name not in self.classes:
             print('** class doesn\'t exist **')
             return
 
