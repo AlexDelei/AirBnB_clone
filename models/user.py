@@ -17,12 +17,14 @@ class User(BaseModel):
     def to_dict(self):
         """Return Dictionary representation"""
         user_dict = super().to_dict()
-        user_dict.update({
-            'email': self.email,
-            'password': self.password,
-            'first_name': self.first_name,
-            'last_name' : self.last_name
-            })
+        if self.email:
+            user_dict['email'] = self.email
+        if self.password:
+            user_dict['password'] = self.password
+        if self.first_name:
+            user_dict['first_name'] = self.first_name
+        if self.last_name:
+            user_dict['last_name'] = self.last_name
         return user_dict
 
     def from_dict(self, data):
