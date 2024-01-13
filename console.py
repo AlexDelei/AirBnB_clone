@@ -6,7 +6,10 @@ import os
 import subprocess
 import json
 import uuid
+import ast
+import shlex
 from datetime import datetime
+from importlib import import_module
 
 
 class BaseModel:
@@ -35,6 +38,7 @@ class BaseModel:
     def to_dict(self):
         """dictionary rep of the instance"""
         return {
+                'first_name': "delei",
                 'id': self.id,
                 'created_at': self.created_at.isoformat(),
                 'updated_at': self.updated_at.isoformat()
@@ -85,7 +89,7 @@ class BaseModel:
         try:
             with open(filename, 'r') as f2:
                 data = json.load(f2)
-                
+
                 for item in data:
                     inst = cls(**json.loads(item))
                     instances.append(str(inst))
@@ -118,61 +122,61 @@ class HBNBCommand(cmd.Cmd):
 
         of an instance
         """
-        args = arg.split()
-        if not args:
-            print('** class name missing **')
+        if not arg:
+            print('*id missing **')
             return
 
-        try:
-            class_name, *obj_id = args
-            if class_name not in globals():
-                print('** class doesn\'t exist **')
-                return
+        obj_id = arg.split()[1].strip()
+        with open("file.json", 'r') as f_4:
+            data = json.load(f_4)
 
-            cls = globals()[class_name]
-            if not obj_id:
-                print('** instance id missing **')
-                return
+            for key in data.keys():
+                if '.' in key:
+                    class_name, stored_id = key.split('.')
+                else:
+                    class_name, stored_id = "BaseModel", key
 
-            obj_id = obj_id[0]
-            instance = cls.load(obj_id)
-            if not instance:
-                print('** no instance found **')
-                return
+                    if stored_id == obj_id:
+                        module = import_module("models.base_model")
+                        cls = getattr(module, class_name)
+                        obj_instance = cls(**data[key])
+                        print(obj_instance)
+                        return
 
-            print(instance)
-        except ValueError:
-            print('** instance id missing **')
+            print("False")
 
     def do_destroy(self, arg):
         """Deletes an instance based on
 
         class name and id"""
-        args = arg.split()
-        if not args:
-            print('** class name missing **')
+        if not arg:
+            print('** id missing **')
             return
-
+        obj_id = arg.strip()
         try:
-            class_name, *obj_id = args
-            if class_name not in globals():
-                print('** class doesn\'t exist **')
-                return
+            with open("file.json", 'r') as f_5:
+                data = json.load(f_5)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = {}
 
-            cls = globals()[class_name]
-            if not obj_id:
-                print('** instance id missing **')
-                return
+        instance_found = False
+        for key in data.keys():
+            if '.' in key:
+                class_name, stored_id = key.split('.')
+            else:
+                class_name, stored_id = "BaseModel", key
 
-            obj_id = obj_id[0]
-            instance = cls.load(obj_id)
-            if not instance:
-                print('** no instance found **')
-                return
+                if stored_id == obj_id:
+                    del data[key]
+                    instance_found = True
+                    break
+        with open("file.json", 'w') as f_6:
+            json.dump(data, f_6)
 
-            instance.delete()
-        except ValueError:
-            print('** instance id missing **')
+        if instance_found:
+            print('Instance deleted successfully')
+        else:
+            print(f'** no instance found [{obj_id}] not [{stored_id}] **')
 
     def do_all(self, arg):
         """prints the contents of file.json"""
@@ -189,14 +193,63 @@ class HBNBCommand(cmd.Cmd):
                     else:
                         class_name, obj_id = "BaseModel", key
 
-                    str_represent = f"[BaseModel] ({obj_id}) {json.dumps(value, default=str)}"
-                    str_rep.append(str_represent)
+                    str_rpr = (
+                            f"[BaseModel] ({obj_id}) "
+                            f"{json.dumps(value, default=str)}"
+                            )
+                    str_rep.append(str_rpr)
 
                 print(str_rep)
         except FileNotFoundError:
             print("Error File not found")
         except json.JSONDecodeError as e:
             print(f"Error : {e}")
+
+    def do_update(self, arg):
+        """updates an instance based on class nae and id"""
+
+        args = shlex.split(arg)
+        if len(args) < 4:
+            print('** insufficient arguments **')
+            return
+        class_name, obj_id, attr_name, attr_val = args
+
+        if len(args) != 4 or not class_name:
+            print('** class name missing **')
+            return
+        if class_name not in globals():
+            print('** class doesn\'t exist **')
+            return
+        if not obj_id:
+            print('** instance id missing **')
+            return
+        if not attr_name:
+            print('** attribute name missing **')
+            return
+
+        obj_id = obj_id.strip()
+
+        filename = "file.json"
+        try:
+            with open(filename, 'r') as f_7:
+                data = json.load(f_7)
+        except FileNotFoundError:
+            data = {}
+
+        instance_key = f'{obj_id}'
+        if instance_key not in data:
+            print('** no instance found **')
+            return
+        instance_data = data[instance_key]
+        if 'first_name' in instance_data:
+            instance_data['first_name'] = attr_val
+        else:
+            print('** first_name attribute not found **')
+            return
+        with open(filename, 'w') as f_8:
+            json.dump(data, f_8)
+
+        print('update successful')
 
     def do_quit(self, arg):
         """Quit command to exit the program
@@ -265,16 +318,16 @@ class HBNBCommand(cmd.Cmd):
             print('Usage: chmod <permission> <file>')
             return
         permission, file_path = args
-        valid_permissions = {'u+x': 0o100, 'u-x': 0o0, 'g+x': 0o010, 'g-x': 0o0}
+        valid_permission = {'u+x': 0o100, 'u-x': 0o0, 'g+x': 0o010, 'g-x': 0o0}
 
-        if permission not in valid_permissions:
+        if permission not in valid_permission:
             print('Invalid permission. Use u+x, u-x, g+x, g-x')
             return
 
         try:
             current_mode = os.stat(file_path).st_mode
-            if valid_permissions[permission] & current_mode == 0:
-                new_mode = current_mode | valid_permissions[permission]
+            if valid_permission[permission] & current_mode == 0:
+                new_mode = current_mode | valid_permission[permission]
                 os.chmod(file_path, new_mode)
         except FileNotFoundError:
             print(f'File not found: {file_path}')

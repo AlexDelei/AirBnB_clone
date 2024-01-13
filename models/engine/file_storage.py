@@ -5,9 +5,10 @@ import os
 import logging
 from importlib import import_module
 
+
 class FileStorage:
     """File handling class"""
-    
+
     __file_path = os.path.join("/AirBnB_clone/", "file.json")
     __objects = {}
 
