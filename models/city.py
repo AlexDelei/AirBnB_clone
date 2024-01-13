@@ -4,11 +4,8 @@ from models.base_model import BaseModel
 
 
 class City(BaseModel):
-    """holds city name"""
+    state_id = ""
+    name= ""
 
     def __init__(self, *args, **kwargs):
-        """initialising public instances"""
-
         super().__init__(*args, **kwargs)
-        self.state_id = ""
-        self.name = ""

@@ -4,10 +4,7 @@ from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
-    """holds amenities"""
+    name = ""
 
     def __init__(self, *args, **kwargs):
-        """initializing its public instances"""
-
         super().__init__(*args, **kwargs)
-        self.name = ""
