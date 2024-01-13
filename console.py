@@ -162,9 +162,20 @@ class HBNBCommand(cmd.Cmd):
 
         class name and id"""
         if not arg:
-            print('** id missing **')
+            print("** class name missing **")
             return
-        obj_id = arg.strip()
+        obj_id = arg.split()
+
+        class_name = obj_id[0]
+
+        if class_name not in globals():
+            print('** class doesn\'t exist **')
+            return
+
+        if len(obj_id) == 1:
+            print('** instance id missing **')
+            return
+        obj_id = obj_id[1].strip()
         try:
             with open("file.json", 'r') as f_5:
                 data = json.load(f_5)
@@ -185,10 +196,8 @@ class HBNBCommand(cmd.Cmd):
         with open("file.json", 'w') as f_6:
             json.dump(data, f_6)
 
-        if instance_found:
-            print('Instance deleted successfully')
-        else:
-            print(f'** no instance found [{obj_id}] not [{stored_id}] **')
+        if not instance_found:
+            print(f'** no instance found **')
 
     def do_all(self, arg):
         """prints the contents of file.json"""
