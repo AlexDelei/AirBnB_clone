@@ -44,9 +44,9 @@ class FileStorage:
                     if '.' in key:
                         class_name, obj_id = key.split('.')
                     else:
-                        class_name, obj_id = "BaseModel", key
+                        class_name, obj_id = "User", key
 
-                    module = import_module('models.base_model')
+                    module = import_module('models.user')
                     clas = getattr(module, class_name)
                     obj_instance = clas(**value)
                     FileStorage.__objects[key] = obj_instance

@@ -38,7 +38,6 @@ class BaseModel:
     def to_dict(self):
         """dictionary rep of the instance"""
         return {
-                'first_name': "delei",
                 'id': self.id,
                 'created_at': self.created_at.isoformat(),
                 'updated_at': self.updated_at.isoformat()
@@ -109,13 +108,14 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print('** class name missing **')
             return
-        try:
-            class_name = arg.strip()
-            new_inst = globals()[class_name]()
-            new_inst.save()
-            print(new_inst.id)
-        except KeyError:
+
+        class_name = arg.split()[0]
+        if class_name not in ['BaseModel', 'User']:
             print('** class doesn\'t exist **')
+            return
+        new_inst = globals()[class_name]()
+        new_inst.save()
+        print(new_inst.id)
 
     def do_show(self, arg):
         """prints string representation
@@ -130,7 +130,7 @@ class HBNBCommand(cmd.Cmd):
 
         class_name = obj_id[0]
 
-        if class_name not in globals():
+        if class_name not in ['BaseModel', 'User']:
             print('** class doesn\'t exist **')
             return
 
@@ -168,7 +168,7 @@ class HBNBCommand(cmd.Cmd):
 
         class_name = obj_id[0]
 
-        if class_name not in globals():
+        if class_name not in ['BaseModel', 'User']:
             print('** class doesn\'t exist **')
             return
 
@@ -211,7 +211,7 @@ class HBNBCommand(cmd.Cmd):
                 if arg:
                     class_name = arg.strip()
                     try:
-                        if class_name not in globals():
+                        if class_name not in ['BaseModel', 'User']:
                             raise NameError
                     except NameError:
                         print('** class doesn\'t exist **')
@@ -248,7 +248,7 @@ class HBNBCommand(cmd.Cmd):
         if not class_name:
             print('** class name missing **')
             return
-        if class_name not in globals():
+        if class_name not in ['BaseModel', 'User']:
             print('** class doesn\'t exist **')
             return
 
