@@ -40,11 +40,11 @@ class BaseModel:
 
         obj_dict = {
                 'id': self.id,
-                'created_at': self.created_at.isoformat(),
+                'created_at': self.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f'),
                 '__class__': self.__class__.__name__,
                 'my_number': getattr(self, 'my_number', None),
                 'updated_at': (
-                    self.updated_at.isoformat()
+                    self.updated_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
                     if isinstance(self.updated_at, datetime)
                     else self.updated_at
                     ),
