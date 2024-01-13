@@ -42,11 +42,7 @@ class FileStorage:
                     return
 
                 for key, value in data.items():
-                    if '.' in key:
-                        class_name, obj_id = key.split('.')
-                    else:
-                        class_name, obj_id = "User", key
-
+                    class_name, obj_id = key.split('.')
                     module = import_module('models.user')
                     clas = getattr(module, class_name)
                     obj_instance = clas(**value)
