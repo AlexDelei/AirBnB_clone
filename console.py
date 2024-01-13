@@ -123,10 +123,22 @@ class HBNBCommand(cmd.Cmd):
         of an instance
         """
         if not arg:
-            print('*id missing **')
+            print('** class name missing **')
             return
 
-        obj_id = arg.split()[1].strip()
+        obj_id = arg.split()
+
+        class_name = obj_id[0]
+
+        if class_name not in globals():
+            print('** class doesn\'t exist **')
+            return
+
+        if len(obj_id) == 1:
+            print('** instance id missing **')
+            return
+
+        obj_id = obj_id[1].strip()
         with open("file.json", 'r') as f_4:
             data = json.load(f_4)
 
@@ -143,7 +155,7 @@ class HBNBCommand(cmd.Cmd):
                         print(obj_instance)
                         return
 
-            print("False")
+            print('** no instance found **')
 
     def do_destroy(self, arg):
         """Deletes an instance based on
