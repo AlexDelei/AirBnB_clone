@@ -279,13 +279,9 @@ class HBNBCommand(cmd.Cmd):
         instance_data = data[instance_key]
         if 'first_name' in instance_data:
             instance_data['first_name'] = attr_val
-        else:
-            print('** ** value missing ** **')
-            return
+
         with open(filename, 'w') as f_8:
             json.dump(data, f_8)
-
-        print('update successful')
 
     def do_quit(self, arg):
         """Quit command to exit the program
