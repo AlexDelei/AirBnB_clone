@@ -207,6 +207,16 @@ class HBNBCommand(cmd.Cmd):
             with open(filename, 'r') as f_t:
                 data = json.load(f_t)
 
+                class_name = None
+                if arg:
+                    class_name = arg.strip()
+                    try:
+                        if class_name not in globals():
+                            raise NameError
+                    except NameError:
+                        print('** class doesn\'t exist **')
+                        return
+
                 str_rep = []
                 for key, value in data.items():
                     if '.' in key:
