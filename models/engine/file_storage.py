@@ -25,7 +25,6 @@ class FileStorage:
         """serializes the objects into JSON file"""
         serialized = {}
         for key, obj in FileStorage.__objects.items():
-            _, obj_id = key.split('.')
             serialized[key] = obj.to_dict()
 
         with open(FileStorage.__file_path, 'w', encoding="utf-8") as f:
@@ -42,7 +41,8 @@ class FileStorage:
                     return
 
                 for key, value in data.items():
-                    class_name, obj_id = key.split('.')
+                    if '.' in key:
+                        class_name, obj_id = key.split('.')
                     module = import_module('models.user')
                     clas = getattr(module, class_name)
                     obj_instance = clas(**value)
