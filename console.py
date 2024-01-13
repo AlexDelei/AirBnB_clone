@@ -240,25 +240,22 @@ class HBNBCommand(cmd.Cmd):
         """updates an instance based on class nae and id"""
 
         args = shlex.split(arg)
-        if len(args) < 4:
-            print('** insufficient arguments **')
-            return
-        class_name, obj_id, attr_name, attr_val = args
 
-        if len(args) != 4 or not class_name:
+        if len(args) < 1:
+            print('** class name missing **')
+            return
+        class_name = args[0]
+        if not class_name:
             print('** class name missing **')
             return
         if class_name not in globals():
             print('** class doesn\'t exist **')
             return
-        if not obj_id:
+
+        if len(args) < 2:
             print('** instance id missing **')
             return
-        if not attr_name:
-            print('** attribute name missing **')
-            return
-
-        obj_id = obj_id.strip()
+        obj_id = args[1]
 
         filename = "file.json"
         try:
@@ -271,11 +268,19 @@ class HBNBCommand(cmd.Cmd):
         if instance_key not in data:
             print('** no instance found **')
             return
+        if len(args) < 3:
+            print('** attribute name missing **')
+            return
+        attr_name = args[2]
+        if len(args) < 4:
+            print('** value missing **')
+            return
+        attr_val = args[3]
         instance_data = data[instance_key]
         if 'first_name' in instance_data:
             instance_data['first_name'] = attr_val
         else:
-            print('** first_name attribute not found **')
+            print('** ** value missing ** **')
             return
         with open(filename, 'w') as f_8:
             json.dump(data, f_8)
