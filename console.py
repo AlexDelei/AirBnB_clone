@@ -38,6 +38,7 @@ class BaseModel:
     def to_dict(self):
         """dictionary rep of the instance"""
         return {
+                'first_name': "delei",
                 'id': self.id,
                 'created_at': self.created_at.isoformat(),
                 'updated_at': self.updated_at.isoformat()
