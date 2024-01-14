@@ -85,6 +85,14 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
+    def do_User(self, line):
+        """Handling user instance"""
+        args = line.split()
+        if len(args) == 1 and args[0] == '.all()':
+            self.do_all('User')
+        else:
+            cmd.Cmd.do_help(self, 'User')
+
     def do_all(self, arg):
         """prints the contents of file.json"""
 
@@ -122,14 +130,6 @@ class HBNBCommand(cmd.Cmd):
         except json.JSONDecodeError as e:
             print(f"Error : {e}")
 
-    def do_BaseModel(self, arg):
-        """prints len of all basemodels"""
-        if 'BaseModel' in models.storage.all():
-            inst = models.storage.all().values()
-            class_cnts = Counter(obj.__class__.__name__ for obj in inst)
-            base_mdl_cnt = class_cnts.get('BaseModel', 0)
-
-            print(base_mdl_cnt)
 
     def do_update(self, arg):
         """updates an instance based on class nae and id"""
