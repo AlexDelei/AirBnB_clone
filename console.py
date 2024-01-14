@@ -19,14 +19,15 @@ from models.city import City
 from datetime import datetime
 from importlib import import_module
 
+classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
+
 
 class HBNBCommand(cmd.Cmd):
     """Our Console code"""
 
     prompt = '(hbnb) '
 
-    classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
 
     def do_create(self, arg):
         """creates an instance and saves it to a json file"""
@@ -35,8 +36,8 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return False
-        if args[0] in self.classes:
-            instance = self.classes[args[0]]()
+        if args[0] in classes:
+            instance = classes[args[0]]()
         else:
             print("** class doesn't exist **")
             return False
@@ -52,7 +53,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return False
-        if args[0] in self.classes:
+        if args[0] in classes:
             if len(args) > 1:
                 key = args[0] + "." + args[1]
                 if key in models.storage.all():
@@ -75,7 +76,7 @@ class HBNBCommand(cmd.Cmd):
 
         class_name = obj_id[0]
 
-        if class_name not in self.classes:
+        if class_name not in classes:
             print('** class doesn\'t exist **')
             return
 
@@ -118,7 +119,7 @@ class HBNBCommand(cmd.Cmd):
                 if arg:
                     class_name = arg.strip()
                     try:
-                        if class_name not in self.classes:
+                        if class_name not in classes:
                             raise NameError
                     except NameError:
                         print('** class doesn\'t exist **')
@@ -129,10 +130,10 @@ class HBNBCommand(cmd.Cmd):
                     if '.' in key:
                         class_name, obj_id = key.split('.')
                     else:
-                        class_name, obj_id = "BaseModel", key
+                        class_name, obj_id = "Fail", key
 
                     str_rpr = (
-                            f"[BaseModel] ({obj_id}) "
+                            f"[{class_name}] ({obj_id}) "
                             f"{json.dumps(value, default=str)}"
                             )
                     str_rep.append(str_rpr)
@@ -155,7 +156,7 @@ class HBNBCommand(cmd.Cmd):
         if not class_name:
             print('** class name missing **')
             return
-        if class_name not in self.classes:
+        if class_name not in classes:
             print('** class doesn\'t exist **')
             return
 
