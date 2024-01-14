@@ -2,9 +2,8 @@
 """My base model module"""
 import uuid
 from datetime import datetime
-import models
 from datetime import date
-
+import models
 
 class BaseModel:
     """Parent class with
@@ -43,9 +42,9 @@ class BaseModel:
         for k, v in self.__dict__.items():
             if k == "created_at" or k == "updated_at":
                 if isinstance(v, datetime):
-                    d[k] = datetime.strftime(v, '%Y-%m-%dT%H:%M:%S.%f')
-                else:
-                    d[k] = v
+                    d[k] = datetime.isoformat(v)
+            else:
+                d[k] = v
         d["__class__"] = self.__class__.__name__
         return d
 
