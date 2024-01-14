@@ -69,43 +69,21 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on
 
         class name and id"""
-        if not arg:
+        args = shlex.split(arg)
+        if len(args) == 0:
             print("** class name missing **")
-            return
-        obj_id = arg.split()
-
-        class_name = obj_id[0]
-
-        if class_name not in classes:
-            print('** class doesn\'t exist **')
-            return
-
-        if len(obj_id) == 1:
-            print('** instance id missing **')
-            return
-        obj_id = obj_id[1].strip()
-        try:
-            with open("file.json", 'r') as f_5:
-                data = json.load(f_5)
-        except (FileNotFoundError, json.JSONDecodeError):
-            data = {}
-
-        instance_found = False
-        for key in data.keys():
-            if '.' in key:
-                class_name, stored_id = key.split('.')
+        elif args[0] in classes:
+            if len(args) > 1:
+                key = args[0] + "." + args[1]
+                if key in models.storage.all():
+                    models.storage.all().pop(key)
+                    models.storage.save()
+                else:
+                    print("** no instance found **")
             else:
-                class_name, stored_id = "BaseModel", key
-
-                if stored_id == obj_id:
-                    del data[key]
-                    instance_found = True
-                    break
-        with open("file.json", 'w') as f_6:
-            json.dump(data, f_6)
-
-        if not instance_found:
-            print(f'** no instance found **')
+                print("** instance id missing **")
+        else:
+            print("** class doesn't exist **")
 
     def do_all(self, arg):
         """prints the contents of file.json"""
