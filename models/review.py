@@ -4,6 +4,7 @@ from models.base_model import BaseModel
 
 
 class Review(BaseModel):
+    """review info"""
     place_id = ""
     user_id = ""
     text = ""

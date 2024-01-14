@@ -9,6 +9,7 @@ import uuid
 import ast
 import shlex
 import models
+from collections import Counter
 from models.base_model import BaseModel
 from models.amenity import Amenity
 from models.place import Place
@@ -120,6 +121,15 @@ class HBNBCommand(cmd.Cmd):
             print("Error File not found")
         except json.JSONDecodeError as e:
             print(f"Error : {e}")
+
+    def do_BaseModel(self, arg):
+        """prints len of all basemodels"""
+        if 'BaseModel' in models.storage.all():
+            inst = models.storage.all().values()
+            class_cnts = Counter(obj.__class__.__name__ for obj in inst)
+            base_mdl_cnt = class_cnts.get('BaseModel', 0)
+
+            print(base_mdl_cnt)
 
     def do_update(self, arg):
         """updates an instance based on class nae and id"""

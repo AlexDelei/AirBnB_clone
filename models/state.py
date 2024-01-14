@@ -5,6 +5,7 @@ from models.base_model import BaseModel
 
 
 class State(BaseModel):
+    """states name"""
     name = ""
 
     def __init__(self, *args, **kwargs):

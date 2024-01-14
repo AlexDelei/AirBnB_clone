@@ -4,6 +4,7 @@ from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
+    """holds name amenity"""
     name = ""
 
     def __init__(self, *args, **kwargs):
