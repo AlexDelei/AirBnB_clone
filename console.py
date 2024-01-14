@@ -28,7 +28,6 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = '(hbnb) '
 
-
     def do_create(self, arg):
         """creates an instance and saves it to a json file"""
 

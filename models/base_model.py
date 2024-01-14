@@ -48,15 +48,6 @@ class BaseModel:
         d["__class__"] = self.__class__.__name__
         return d
 
-    @classmethod
-    def from_dict(cls, data):
-        """returns dictionary items"""
-        return cls(
-                id = data.get('id'),
-                created_at = data.get('created_at'),
-                updated_at = data.get('updated_at')
-                )
-
     def __str__(self):
         """string representation of class"""
         return "[{}] ({}) {}".format(
