@@ -9,6 +9,7 @@ import uuid
 import ast
 import shlex
 import models
+from models.base_model import BaseModel
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
@@ -17,91 +18,6 @@ from models.state import State
 from models.city import City
 from datetime import datetime
 from importlib import import_module
-
-
-class BaseModel:
-    """BaseModel Code"""
-
-    def __init__(self, *args, **kwargs):
-        """initialising public instances"""
-
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-
-    def save(self):
-        """Saves info into the json file"""
-
-        filename = "file.json"
-        try:
-            with open(filename, 'r', encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            data = {}
-        data[self.id] = self.to_dict()
-        with open(filename, 'w', encoding="utf-8") as f:
-            json.dump(data, f)
-
-    def to_dict(self):
-        """dictionary rep of the instance"""
-        return {
-                'id': self.id,
-                'created_at': self.created_at.isoformat(),
-                'updated_at': self.updated_at.isoformat()
-                }
-
-    @classmethod
-    def load(cls, obj_id):
-        """load an instance from json file
-
-        based on class_name and id
-        """
-        filename = "file.json"
-        try:
-            with open(filename, 'r') as f_1:
-                data = json.load(f_1)
-                if isinstance(data, dict):
-                    instance_data = data.get(obj_id)
-                    if instance_data:
-                        instance = cls(**instance_data)
-                        return instance
-        except json.JSONDecodeError as e:
-            print(f"An error occured: {e}")
-        return None
-
-    def delete(self):
-        """Delete an instance from the file"""
-
-        filename = "file.json"
-        try:
-            with open(filename, 'r') as f:
-                data = json.load(f)
-                data = [item for item in data if item.get('id') != self.id]
-
-            with open(filename, 'w') as f:
-                json.dump(data, f)
-
-        except json.JSONDecodeError as e:
-            print(f"An Error occured : {e}")
-
-    @classmethod
-    def all(cls):
-        """Get a list of string representations
-
-        of all instances"""
-        filename = "file.json"""
-        instances = []
-
-        try:
-            with open(filename, 'r') as f2:
-                data = json.load(f2)
-
-                for item in data:
-                    inst = cls(**json.loads(item))
-                    instances.append(str(inst))
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass
-        return instances
 
 
 class HBNBCommand(cmd.Cmd):
@@ -115,57 +31,38 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, arg):
         """creates an instance and saves it to a json file"""
 
-        if not arg:
-            print('** class name missing **')
-            return
-
-        class_name = arg.split()[0]
-        if class_name not in self.classes:
-            print('** class doesn\'t exist **')
-            return
-        new_inst = globals()[class_name]()
-        new_inst.save()
-        print(new_inst.id)
+        args = shlex.split(arg)
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] in self.classes:
+            instance = self.classes[args[0]]()
+        else:
+            print("** class doesn't exist **")
+            return False
+        print(instance.id)
+        instance.save()
 
     def do_show(self, arg):
         """prints string representation
 
         of an instance
         """
-        if not arg:
-            print('** class name missing **')
-            return
-
-        obj_id = arg.split()
-
-        class_name = obj_id[0]
-
-        if class_name not in self.classes:
-            print('** class doesn\'t exist **')
-            return
-
-        if len(obj_id) == 1:
-            print('** instance id missing **')
-            return
-
-        obj_id = obj_id[1].strip()
-        with open("file.json", 'r') as f_4:
-            data = json.load(f_4)
-
-            for key in data.keys():
-                if '.' in key:
-                    class_name, stored_id = key.split('.')
+        args = shlex.split(arg)
+        if len(args) == 0:
+            print("** class name missing **")
+            return False
+        if args[0] in self.classes:
+            if len(args) > 1:
+                key = args[0] + "." + args[1]
+                if key in models.storage.all():
+                    print(models.storage.all()[key])
                 else:
-                    class_name, stored_id = "BaseModel", key
-
-                    if stored_id == obj_id:
-                        module = import_module("models.base_model")
-                        cls = getattr(module, class_name)
-                        obj_instance = cls(**data[key])
-                        print(obj_instance)
-                        return
-
-            print('** no instance found **')
+                    print("** no instance found **")
+            else:
+                print("** instance id missing **")
+        else:
+            print("** class doesn't exist **")
 
     def do_destroy(self, arg):
         """Deletes an instance based on
