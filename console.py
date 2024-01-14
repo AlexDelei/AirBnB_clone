@@ -130,7 +130,6 @@ class HBNBCommand(cmd.Cmd):
         except json.JSONDecodeError as e:
             print(f"Error : {e}")
 
-
     def do_update(self, arg):
         """updates an instance based on class nae and id"""
 
