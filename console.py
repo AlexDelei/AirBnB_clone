@@ -148,48 +148,40 @@ class HBNBCommand(cmd.Cmd):
         """updates an instance based on class nae and id"""
 
         args = shlex.split(arg)
-
-        if len(args) < 1:
-            print('** class name missing **')
-            return
-        class_name = args[0]
-        if not class_name:
-            print('** class name missing **')
-            return
-        if class_name not in classes:
-            print('** class doesn\'t exist **')
-            return
-
-        if len(args) < 2:
-            print('** instance id missing **')
-            return
-        obj_id = args[1]
-
-        filename = "file.json"
-        try:
-            with open(filename, 'r') as f_7:
-                data = json.load(f_7)
-        except FileNotFoundError:
-            data = {}
-
-        instance_key = f'{obj_id}'
-        if instance_key not in data:
-            print('** no instance found **')
-            return
-        if len(args) < 3:
-            print('** attribute name missing **')
-            return
-        attr_name = args[2]
-        if len(args) < 4:
-            print('** value missing **')
-            return
-        attr_val = args[3]
-        instance_data = data[instance_key]
-        if 'first_name' in instance_data:
-            instance_data['first_name'] = attr_val
-
-        with open(filename, 'w') as f_8:
-            json.dump(data, f_8)
+        integers = ["number_rooms", "number_bathrooms", "max_guest",
+                    "price_by_night"]
+        floats = ["latitude", "longitude"]
+        if len(args) == 0:
+            print("** class name missing **")
+        elif args[0] in classes:
+            if len(args) > 1:
+                k = args[0] + "." + args[1]
+                if k in models.storage.all():
+                    if len(args) > 2:
+                        if len(args) > 3:
+                            if args[0] == "Place":
+                                if args[2] in integers:
+                                    try:
+                                        args[3] = int(args[3])
+                                    except Exception as e:
+                                        args[3] = 0
+                                elif args[2] in floats:
+                                    try:
+                                        args[3] = float(args[3])
+                                    except Exception as e:
+                                        args[3] = 0.0
+                            setattr(models.storage.all()[k], args[2], args[3])
+                            models.storage.all()[k].save()
+                        else:
+                            print("** value missing **")
+                    else:
+                        print("** attribute name missing **")
+                else:
+                    print("** no instance found **")
+            else:
+                print("** instance id missing **")
+        else:
+            print("** class doesn't exist **")
 
     def do_quit(self, arg):
         """Quit command to exit the program
