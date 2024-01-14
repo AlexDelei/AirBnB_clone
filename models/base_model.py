@@ -17,15 +17,16 @@ class BaseModel:
         """Initializing public int attr"""
         if kwargs:
             for key, value in kwargs.items():
-                if key != '__class__':
-                    if key in ('created_at', ' updated_at'):
-                        setattr(
-                            self,
-                            key,
-                            datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
-                            )
-                    else:
-                        setattr(self, key, value)
+                if key in ('created_at', ' updated_at'):
+                    setattr(
+                        self,
+                        key,
+                        datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                        )
+                elif key == "__class__":
+                    continue
+                else:
+                    setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -42,8 +43,7 @@ class BaseModel:
         d = {}
         for k, v in self.__dict__.items():
             if k == "created_at" or k == "updated_at":
-                if isinstance(v, datetime):
-                    d[k] = v.strftime('%Y-%m-%dT%H:%M:%S.%f')
+                d[k] = v.strftime('%Y-%m-%dT%H:%M:%S.%f')
             else:
                 d[k] = v
         d["__class__"] = self.__class__.__name__

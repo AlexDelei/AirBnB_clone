@@ -4,6 +4,7 @@
 import unittest
 import re
 from time import sleep
+from datetime import datetime
 from models import storage
 from models.base_model import BaseModel
 
@@ -98,13 +99,12 @@ class BaseModel_Test(unittest.TestCase):
         new_b = BaseModel(**d)
         self.assertEqual(b.id, new_b.id)
         self.assertEqual(b.created_at, new_b.created_at)
-
         self.assertEqual(b.name, new_b.name)
         self.assertEqual(b.number, new_b.number)
         self.assertEqual(type(new_b.id), str)
-        self.assertEqual(new_b.created_at.__class__.__name__, "datetime")
-        self.assertEqual(new_b.updated_at.__class__.__name__, "datetime")
-        self.assertTrue(b is not new_b)
+        self.assertIsInstance(new_b.created_at, datetime)
+        self.assertIsInstance(new_b.updated_at, str)
+        self.assertIsNot(b, new_b)
 
     def test_07a_string_input(self):
         """Passing a string for args"""
