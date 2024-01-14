@@ -17,7 +17,7 @@ class BaseModel:
         """Initializing public int attr"""
         if kwargs:
             for key, value in kwargs.items():
-                if key != key:
+                if key != '__class__':
                     if key in ('created_at', ' updated_at'):
                         setattr(
                             self,
