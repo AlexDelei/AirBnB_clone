@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Unittest for BaseModel class """
-
+import os
 import unittest
 import re
 from time import sleep
@@ -63,6 +63,34 @@ class BaseModel_Test(unittest.TestCase):
         b.save()
         second_time = b.updated_at
         self.assertNotEqual(first_time, second_time)
+
+    def test_save_updates_updated_at(self):
+        """testting the updated_at attr"""
+        filename = "file.json"
+        data = storage.all()
+        b = BaseModel()
+        key = "BaseModel" + "." + b.id
+        self.assertTrue(key in data)
+
+    def test_save_creates_file_if_not_exists(self):
+        """creating file if not there"""
+        filename = "file.json"
+        b = BaseModel()
+
+        if os.path.isfile(filename):
+            os.remove(filename)
+
+        b.save()
+        self.assertTrue(os.path.exists(filename))
+
+    def test_save_updates_created(self):
+        """testing created_at attribute"""
+        b = BaseModel()
+        old_created_at = b.created_at
+        b.save()
+        new_created_at = b.created_at
+
+        self.assertEqual(old_created_at, new_created_at)
 
     def test_06_to_dict(self):
         """Test to validate to_dict is outputting correctly"""
