@@ -2,6 +2,8 @@
 """unittest for Filestorage class"""
 import unittest
 import os
+import json
+from unittest.mock import patch
 from models import storage
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
@@ -12,12 +14,24 @@ class FileStorage_Test(unittest.TestCase):
 
     def setUp(self):
         """Creating a setup tests"""
-        pass
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
+
+        if os.path.isfile("file.json"):
+            os.remove("file.json")
+
+    def test_reload_on_non_existing(self):
+        """Test reloading from a non-existing file"""
+        fs = FileStorage()
+        fs.reload()
+
+        loaded = fs.all()
+        self.assertNotEqual(len(loaded), 0)
 
     def tearDown(self):
         """Destroy All the tests"""
         try:
-            os.remove("file.json")
+            os.remove(FileStorage._FileStorage__file_path)
         except Exception:
             pass
 
